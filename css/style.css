@@ -8,57 +8,71 @@ h1 {
   text-align: center;
   padding: 30px;
   font-family: "Roboto", sans-serif;
+  color: #fafafa;
 }
 
 body {
   position: relative;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+  background: url(../img/wrapper.jpg) no-repeat center fixed;
+  background-size: cover;
+  box-shadow: inset 0px 0px 40px rgba(0, 0, 0, 0.2);
 }
 
-.element {
-  position: absolute;
-  left: 600px;
-  top: 200px;
-  text-align: center;
-  display: inline-block;
-
-  width: 280px;
-  background: rgb(233, 188, 92);
-  border-radius: 5px;
-  
+.page__title {
+  width: 100%;
 }
-.element span {
-  display: inline-block;
-  padding: 10px;
-  cursor: pointer;
-  -webkit-user-select: none;
-          user-select: none;
- 
-  color: rgb(255, 255, 255);
- 
+
+.todoList {
+  display: flex;
 }
 
 .area {
   width: 300px;
-  
+  min-height: 300px;
+  background-color: #ebebeb;
+  border-radius: 7px;
+  margin: 0 7px;
   display: inline-block;
-  margin-left: 30px;
+  padding-bottom: 15px;
 }
 .area__title {
   padding: 10px 0;
+  font-family: Arial, Helvetica, sans-serif;
+  text-transform: uppercase;
   background-color: #56A0A1;
   color: #fafafa;
   text-align: center;
-  font-weight: 700;
-  font-family: Arial, Helvetica, sans-serif;
-  text-transform: uppercase;
-
+  border-top-left-radius: 7px;
+  border-top-right-radius: 7px;
 }
 .area__inner {
-  background-color: #ebebeb;
-  height: 200px;
-  font-family: Arial, Helvetica, sans-serif;
+  margin-top: 8px;
+}
+.area__inner input.card {
+  width: 280px;
+  padding: 10px;
+  margin-left: 10px;
+  margin-top: 5px;
 }
 
 .shadow {
-  box-shadow: 10px 10px 12px 0px rgba(0,0,0,0.45);
+  box-shadow: 10px 10px 36px -3px rgba(224, 224, 224, 0.2);
+}
+
+.element {
+  margin: 0px auto;
+  max-width: 280px;
+  width: 280px;
+  padding: 10px;
+  text-align: center;
+  word-wrap: break-word;
+  background: white;
+  color: #0a0a0a;
+  text-align: left;
+  -webkit-user-select: none;
+          user-select: none;
+  cursor: pointer;
 }
