@@ -5,27 +5,44 @@ const cardInput = document.querySelector('.card');
 let inArea = false;
 let elemX;
 
+
+
+
 //Присвоили функцию стартдраг на нажатие мыши
-elem.onmousedown = startDrag;
+//document.onmousedown = startDrag;
+
+document.onmousedown = (e) => {
+	
+	if (e.target.className == "element") {
+		console.log("Это карточка. Можно передвигать.")
+		return startDrag(e);
+	}
+	else console.log("Это не является карточкой");
+	
+}
+
 
 
 
 //Функция для обработки движения элемента
 function startDrag(e) {
 
-	console.log(elem.getBoundingClientRect().x);
-	console.log(elem.getBoundingClientRect().y);
-	console.log("Event src: " + e.srcElement.src);
+
+	//Снимает ограничение на перетаскивание
+
+	e.target.ondragstart = function() {
+		return false;
+	};
 
 
-	elem.style.position = 'absolute';
-	elem.style.left = elem.getBoundingClientRect().x + 'px';
-	elem.style.top = elem.getBoundingClientRect().y + 'px';
+	e.target.style.position = 'absolute';
+	e.target.style.left = e.target.getBoundingClientRect().x + 'px';
+	e.target.style.top = e.target.getBoundingClientRect().y + 'px';
 	
 	
 
-	elemX = (elem.getBoundingClientRect().x + elem.offsetWidth - e.pageX);
-	elemY = (elem.getBoundingClientRect().y + elem.offsetHeight - e.pageY);
+	elemX = (e.target.getBoundingClientRect().x + e.target.offsetWidth - e.pageX);
+	elemY = (e.target.getBoundingClientRect().y + e.target.offsetHeight - e.pageY);
 
 	moveAt(e);
 
@@ -35,14 +52,13 @@ function startDrag(e) {
 
 	function moveAt(e) {
 		
-		elem.style.left = e.pageX - (elem.offsetWidth - elemX) +'px';
-		elem.style.top = e.pageY - (elem.offsetHeight - elemY) +'px';
+		e.target.style.left = e.pageX - (e.target.offsetWidth - elemX) +'px';
+		e.target.style.top = e.pageY - (e.target.offsetHeight - elemY) +'px';
 
-		console.log("Позиция элемента: " + elem.getBoundingClientRect().x);
-		console.log("elemX: " + elemX);
+		// 
 
-		if (elem.getBoundingClientRect().x < area.getBoundingClientRect().x + area.getBoundingClientRect().width && 
-			elem.getBoundingClientRect().y + elem.getBoundingClientRect().height > area.getBoundingClientRect().y) {
+		if (e.target.getBoundingClientRect().x < area.getBoundingClientRect().x + area.getBoundingClientRect().width && 
+		e.target.getBoundingClientRect().y + e.target.getBoundingClientRect().height > area.getBoundingClientRect().y) {
 			area.classList.add('shadow');
 			this.inArea = true;
 		} else {
@@ -56,54 +72,45 @@ function startDrag(e) {
 		moveAt(e);
 	}
 
-	elem.onmouseup = function () {
-		drop(inArea, () => {
-			console.log("Произошел вызов колбэк");
-		});
+	e.target.onmouseup = function () {
+		drop(inArea, e);
 		
 		document.onmousemove = null;
-		elem.onmouseup = null;
+		e.target.onmouseup = null;
 	};
 };
 
 
 // Функция для проверки условия для сброса элемента
 
-function drop (inArea, callback) {
+function drop (inArea, e) {
 	if(this.inArea) {
 		console.log("Элемент можно бросить");
-		elem.style.transition = 'all 1s ease';
+		e.target.style.transition = 'all 1s ease';
 		area.classList.remove('shadow');
 
-		elem.style.left = area.querySelector('.area__inner').getBoundingClientRect().x + 10 + 'px';
-		elem.style.top = area.querySelector('.area__inner').getBoundingClientRect().y + 'px';
+		e.target.style.left = area.querySelector('.area__inner').getBoundingClientRect().x + 'px';
+		e.target.style.top = area.querySelector('.area__inner').getBoundingClientRect().y + 'px';
 
-		elem.onmousedown = "";
+		e.target.onmousedown = "";
 
-		elem.addEventListener('transitionend', function() {
-			elem.style.transition = '';
+		e.target.addEventListener('transitionend', function() {
+			e.target.style.transition = '';
 			console.log("Анимация закончилась...");
-			elem.onmousedown = startDrag;
+			e.target.onmousedown = startDrag;
 		});
 		
 
 		} else {
 	
 		console.log("Элемент нельзя бросить");
-		elem.style.transition = '';
+		e.target.style.transition = '';
 	}
 
-	
-	
-	
 
 }
 
-//Снимает ограничение на перетаскивание
 
-elem.ondragstart = function() {
-	return false;
-};
 
 //Функция добавления карточки
 cardInput.addEventListener('keydown', (e) => {

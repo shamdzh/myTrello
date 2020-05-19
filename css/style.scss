@@ -49,12 +49,11 @@ display: flex;
 	
 	
 	width: 300px;
-	min-height: 300px;
-	background-color: rgb(235, 235, 235);
+	
 	border-radius: 7px;
 	margin:0 7px;
-	display: inline-block;
-	padding-bottom: 15px;
+	display: block;
+	
 	
 	&__title {
 		padding: 10px 0;
@@ -69,22 +68,42 @@ display: flex;
 	}
 
 	&__inner {
-		margin-top: 8px;
 		
+		min-height: 300px;
+		background-color: rgb(235, 235, 235);
+		border-bottom-left-radius: 7px;
+		border-bottom-right-radius: 7px;
+		padding: 10px 10px 15px 10px;
 
+		//Поле добавления карточек
 		input.card {
 			width: 280px;
 			padding: 10px;
-			margin-left: 10px;
-			margin-top: 5px;
-			
-			
 		}
-		
-
-		
 	}
+}
 
+
+// Перетаскиваемый элемент
+
+.element {
+
+	max-width: 280px;
+	width: 280px;	
+
+	padding: 10px;
+	text-align: center;
+	word-wrap: break-word;
+
+	margin-bottom: 6px;
+
+	background: rgb(255, 255, 255);
+	color: rgb(10, 10, 10);
+	text-align: left;
+
+	user-select: none; 
+	cursor: pointer;
+	
 }
 
 .shadow {
@@ -95,25 +114,3 @@ display: flex;
 }
 
 
-// Перетаскиваемый элемент
-
-.element {
-	
-	
-	
-	margin: 0px auto;
-	max-width: 280px;
-	width: 280px;	
-
-	padding: 10px;
-	text-align: center;
-	word-wrap: break-word;
-
-	background: rgb(255, 255, 255);
-	color: rgb(10, 10, 10);
-	text-align: left;
-
-	user-select: none; 
-	cursor: pointer;
-	
-}

@@ -31,12 +31,9 @@ body {
 
 .area {
   width: 300px;
-  min-height: 300px;
-  background-color: #ebebeb;
   border-radius: 7px;
   margin: 0 7px;
-  display: inline-block;
-  padding-bottom: 15px;
+  display: block;
 }
 .area__title {
   padding: 10px 0;
@@ -49,30 +46,32 @@ body {
   border-top-right-radius: 7px;
 }
 .area__inner {
-  margin-top: 8px;
+  min-height: 300px;
+  background-color: #ebebeb;
+  border-bottom-left-radius: 7px;
+  border-bottom-right-radius: 7px;
+  padding: 10px 10px 15px 10px;
 }
 .area__inner input.card {
   width: 280px;
   padding: 10px;
-  margin-left: 10px;
-  margin-top: 5px;
-}
-
-.shadow {
-  box-shadow: 10px 10px 36px -3px rgba(224, 224, 224, 0.2);
 }
 
 .element {
-  margin: 0px auto;
   max-width: 280px;
   width: 280px;
   padding: 10px;
   text-align: center;
   word-wrap: break-word;
+  margin-bottom: 6px;
   background: white;
   color: #0a0a0a;
   text-align: left;
   -webkit-user-select: none;
           user-select: none;
   cursor: pointer;
+}
+
+.shadow {
+  box-shadow: 10px 10px 36px -3px rgba(224, 224, 224, 0.2);
 }
