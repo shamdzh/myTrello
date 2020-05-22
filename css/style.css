@@ -29,6 +29,10 @@ body {
   display: flex;
 }
 
+.todoList {
+  margin: 0 7px;
+}
+
 .area {
   width: 300px;
   border-radius: 7px;
@@ -52,14 +56,16 @@ body {
   border-bottom-right-radius: 7px;
   padding: 10px 10px 15px 10px;
 }
-.area__inner input.card {
+.area__inner input.card__input {
   width: 280px;
   padding: 10px;
+  margin-bottom: 10px;
 }
 
 .element {
   max-width: 280px;
   width: 280px;
+  border-radius: 5px;
   padding: 10px;
   text-align: center;
   word-wrap: break-word;
@@ -71,7 +77,14 @@ body {
           user-select: none;
   cursor: pointer;
 }
+.element:hover {
+  background: #fafafa;
+}
+
+.active {
+  z-index: 1000;
+}
 
 .shadow {
-  box-shadow: 10px 10px 36px -3px rgba(224, 224, 224, 0.2);
+  box-shadow: 10px 10px 36px -3px #e0e0e0;
 }

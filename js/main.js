@@ -1,26 +1,46 @@
-const elem = document.querySelector(".element");
-const area = document.querySelector('.area');
-const cardInput = document.querySelector('.card');
+const elements = document.querySelectorAll(".element");
+const areas = document.querySelectorAll('.area');
+const cardInput = document.querySelector('.card__input');
 
 let inArea = false;
 let elemX;
+let elemY;
 
-
+let activeElement;
+let tempElement;
 
 
 //Присвоили функцию стартдраг на нажатие мыши
 //document.onmousedown = startDrag;
 
-document.onmousedown = (e) => {
-	
-	if (e.target.className == "element") {
+document.onmousedown = mouseDown;
+
+
+function mouseDown(e) {
+	if (e.target.className == "element" || e.target.className == "element active") {
 		console.log("Это карточка. Можно передвигать.")
+		e.target.classList.add("active");
+		activeElement = document.querySelector(".active");
+		
+		elemX = (activeElement.getBoundingClientRect().x);
+		elemY = (activeElement.getBoundingClientRect().y);
+
+		tempElement = document.createElement('div');
+		tempElement.classList.add('element');
+		tempElement.style.height = activeElement.offsetHeight + 'px';
+		tempElement.style.background = 'rgba(77, 77, 77, 0.1)';
+
+		
+		activeElement.after(tempElement);
+
+		
+
+		console.log(elemX, elemY);
+
 		return startDrag(e);
 	}
 	else console.log("Это не является карточкой");
-	
 }
-
 
 
 
@@ -30,19 +50,20 @@ function startDrag(e) {
 
 	//Снимает ограничение на перетаскивание
 
-	e.target.ondragstart = function() {
+
+	activeElement.ondragstart = function() {
 		return false;
 	};
 
 
-	e.target.style.position = 'absolute';
-	e.target.style.left = e.target.getBoundingClientRect().x + 'px';
-	e.target.style.top = e.target.getBoundingClientRect().y + 'px';
+	activeElement.style.position = 'absolute';
+	activeElement.style.left = activeElement.getBoundingClientRect().x + 'px';
+	activeElement.style.top = activeElement.getBoundingClientRect().y + 'px';
 	
 	
 
-	elemX = (e.target.getBoundingClientRect().x + e.target.offsetWidth - e.pageX);
-	elemY = (e.target.getBoundingClientRect().y + e.target.offsetHeight - e.pageY);
+	elemX = (activeElement.getBoundingClientRect().x + activeElement.offsetWidth - e.pageX);
+	elemY = (activeElement.getBoundingClientRect().y + activeElement.offsetHeight - e.pageY);
 
 	moveAt(e);
 
@@ -52,64 +73,82 @@ function startDrag(e) {
 
 	function moveAt(e) {
 		
-		e.target.style.left = e.pageX - (e.target.offsetWidth - elemX) +'px';
-		e.target.style.top = e.pageY - (e.target.offsetHeight - elemY) +'px';
+		activeElement.style.left = e.pageX - (activeElement.offsetWidth - elemX) +'px';
+		activeElement.style.top = e.pageY - (activeElement.offsetHeight - elemY) +'px';
 
 		// 
 
-		if (e.target.getBoundingClientRect().x < area.getBoundingClientRect().x + area.getBoundingClientRect().width && 
-		e.target.getBoundingClientRect().y + e.target.getBoundingClientRect().height > area.getBoundingClientRect().y) {
-			area.classList.add('shadow');
-			this.inArea = true;
+		if (activeElement.getBoundingClientRect().x < areas[0].getBoundingClientRect().x + areas[0].getBoundingClientRect().width && 
+		activeElement.getBoundingClientRect().y + activeElement.getBoundingClientRect().height > areas[0].getBoundingClientRect().y) {
+			areas[0].classList.add('shadow');
+			inArea = true;
+			
 		} else {
-			area.classList.remove('shadow');
-			this.inArea = false;
+			areas[0].classList.remove('shadow');
+			inArea = false;
+			
 		}
-	}
-	
 
-	document.onmousemove = function (e) {
-		moveAt(e);
+		console.log(inArea);
 	}
+		//Двигаеам элемент
+		document.addEventListener ('mousemove', moveAt);
 
-	e.target.onmouseup = function () {
-		drop(inArea, e);
+		//Отпускаем элемент 
+		activeElement.onmouseup = function (e) {
+		drop();
+		document.removeEventListener('mousemove', moveAt);
+		activeElement.onmouseup = null;
 		
-		document.onmousemove = null;
-		e.target.onmouseup = null;
+		
+		
+		
+	
 	};
 };
 
 
 // Функция для проверки условия для сброса элемента
 
-function drop (inArea, e) {
-	if(this.inArea) {
-		console.log("Элемент можно бросить");
-		e.target.style.transition = 'all 1s ease';
-		area.classList.remove('shadow');
+function drop () {
+	console.log('Drop: ', inArea)
 
-		e.target.style.left = area.querySelector('.area__inner').getBoundingClientRect().x + 'px';
-		e.target.style.top = area.querySelector('.area__inner').getBoundingClientRect().y + 'px';
-
-		e.target.onmousedown = "";
-
-		e.target.addEventListener('transitionend', function() {
-			e.target.style.transition = '';
-			console.log("Анимация закончилась...");
-			e.target.onmousedown = startDrag;
-		});
+	if(inArea) {
+		console.log("Элемент можно бросить", this.inArea);
 		
+		activeElement.style.transition = 'all 1s ease';
+		document.onmousedown = "";
+		setTimeout(() => {
+			document.onmousedown = mouseDown;
+		}, 1000);
 
-		} else {
-	
-		console.log("Элемент нельзя бросить");
-		e.target.style.transition = '';
+		areas[0].classList.remove('shadow');
+
+		activeElement.style.left = tempElement.getBoundingClientRect().x + 'px';
+		activeElement.style.top = tempElement.getBoundingClientRect().y + 'px';
+
+		activeElement.onmousedown = null;
+
+		activeElement.addEventListener('transitionend', function() {
+			activeElement.style.transition = '';
+			activeElement.style.position = 'relative';
+			activeElement.style.top = "";
+			activeElement.style.left = "";
+			
+			tempElement.after(activeElement);
+
+			activeElement.classList.remove("active");
+			tempElement.remove();
+
+		
+			console.log("Анимация закончилась...");
+		});} else {
+		console.log("Элемент нельзя бросить", inArea);
+		activeElement.classList.remove("active");
+		tempElement.remove();
+		activeElement.style.transition = '';
+		}
 	}
-
-
-}
-
 
 
 //Функция добавления карточки
@@ -119,6 +158,7 @@ cardInput.addEventListener('keydown', (e) => {
 		let card = document.createElement('div');
 		card.classList.add('element');
 		card.innerHTML = cardInput.value;
-		area.querySelector('.area__inner').prepend(card);
+		areas[0].querySelector('.card__input').before(card);
+		cardInput.value = "";
 	}
-})
+});
