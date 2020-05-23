@@ -82,7 +82,23 @@ body {
 }
 
 .active {
+  max-width: 280px;
+  width: 280px;
+  border-radius: 5px;
+  padding: 10px;
+  text-align: center;
+  word-wrap: break-word;
+  margin-bottom: 6px;
+  background: white;
+  color: #0a0a0a;
+  text-align: left;
+  -webkit-user-select: none;
+          user-select: none;
+  cursor: pointer;
   z-index: 1000;
+}
+.active:hover {
+  background: #fafafa;
 }
 
 .shadow {

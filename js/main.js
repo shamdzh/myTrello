@@ -1,4 +1,5 @@
-const elements = document.querySelectorAll(".element");
+let elements;
+let elementsBox = [];
 const areas = document.querySelectorAll('.area');
 const cardInput = document.querySelector('.card__input');
 
@@ -9,6 +10,8 @@ let elemY;
 let activeElement;
 let tempElement;
 
+let elemsCase;
+
 
 //Присвоили функцию стартдраг на нажатие мыши
 //document.onmousedown = startDrag;
@@ -17,11 +20,19 @@ document.onmousedown = mouseDown;
 
 
 function mouseDown(e) {
+
+	//Тут нужно добавить функцию, которая получит позиции всех элементов
+
+
+	
+
 	if (e.target.className == "element" || e.target.className == "element active") {
 		console.log("Это карточка. Можно передвигать.")
-		e.target.classList.add("active");
+		e.target.className = "active";
 		activeElement = document.querySelector(".active");
 		
+		
+
 		elemX = (activeElement.getBoundingClientRect().x);
 		elemY = (activeElement.getBoundingClientRect().y);
 
@@ -30,11 +41,13 @@ function mouseDown(e) {
 		tempElement.style.height = activeElement.offsetHeight + 'px';
 		tempElement.style.background = 'rgba(77, 77, 77, 0.1)';
 
+		elemsCount();
+		elementsBox = [];
 		
 		activeElement.after(tempElement);
 
 		
-
+		
 		console.log(elemX, elemY);
 
 		return startDrag(e);
@@ -76,7 +89,7 @@ function startDrag(e) {
 		activeElement.style.left = e.pageX - (activeElement.offsetWidth - elemX) +'px';
 		activeElement.style.top = e.pageY - (activeElement.offsetHeight - elemY) +'px';
 
-		// 
+		
 
 		if (activeElement.getBoundingClientRect().x < areas[0].getBoundingClientRect().x + areas[0].getBoundingClientRect().width && 
 		activeElement.getBoundingClientRect().y + activeElement.getBoundingClientRect().height > areas[0].getBoundingClientRect().y) {
@@ -88,8 +101,13 @@ function startDrag(e) {
 			inArea = false;
 			
 		}
-
-		console.log(inArea);
+		
+		console.log(elemsCase);
+		
+		 
+		eval(elemsCase); 
+		
+		
 	}
 		//Двигаеам элемент
 		document.addEventListener ('mousemove', moveAt);
@@ -107,6 +125,17 @@ function startDrag(e) {
 	};
 };
 
+//Обработчик для добавления карточки
+cardInput.addEventListener('keydown', (e) => {
+	if(e.keyCode == 13) {
+		console.log('Карточку можно добавить');
+		let card = document.createElement('div');
+		card.classList.add('element');
+		card.innerHTML = cardInput.value;
+		areas[0].querySelector('.card__input').before(card);
+		cardInput.value = "";
+	}
+});
 
 // Функция для проверки условия для сброса элемента
 
@@ -137,28 +166,36 @@ function drop () {
 			
 			tempElement.after(activeElement);
 
-			activeElement.classList.remove("active");
+			activeElement.className ="element";
 			tempElement.remove();
 
 		
 			console.log("Анимация закончилась...");
 		});} else {
 		console.log("Элемент нельзя бросить", inArea);
-		activeElement.classList.remove("active");
+		activeElement.className = "element";
 		tempElement.remove();
 		activeElement.style.transition = '';
 		}
-	}
+}
 
 
-//Функция добавления карточки
-cardInput.addEventListener('keydown', (e) => {
-	if(e.keyCode == 13) {
-		console.log('Карточку можно добавить');
-		let card = document.createElement('div');
-		card.classList.add('element');
-		card.innerHTML = cardInput.value;
-		areas[0].querySelector('.card__input').before(card);
-		cardInput.value = "";
+function elemsCount() {
+	elements = document.querySelectorAll(".element");
+	elemsCase = `switch (true) { \n`;
+
+	for (i = 0; i < elements.length; i++) {
+		elementsBox.push ({
+			posX: elements[i].getBoundingClientRect().x,
+			posY: elements[i].getBoundingClientRect().y,
+			elemCase: `case ${Number.parseInt(elements[i].getBoundingClientRect().y)} > 
+			Number.parseInt(activeElement.getBoundingClientRect().y): elements[${i}].before(tempElement); break;\n`
+		});
+		console.log(`Element ${i+1} position Y: ` + elementsBox[i].posY);
+		
+		elemsCase += elementsBox[i].elemCase;
 	}
-});
+	elemsCase += `default: elements[elements.length - 1].after(tempElement); break;}`;
+	
+};
+

@@ -118,6 +118,29 @@ display: flex;
 }
 
 .active {
+	max-width: 280px;
+	width: 280px;	
+	border-radius: 5px;
+
+	padding: 10px;
+	text-align: center;
+	word-wrap: break-word;
+
+	margin-bottom: 6px;
+
+	background: rgb(255, 255, 255);
+	color: rgb(10, 10, 10);
+	text-align: left;
+
+	user-select: none; 
+	cursor: pointer;
+	
+
+	&:hover {
+		background: rgb(250, 250, 250);
+	}
+
+
 	z-index: 1000;
 }
 
