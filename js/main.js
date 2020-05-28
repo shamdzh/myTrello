@@ -1,7 +1,11 @@
 let elements;
 let elementsBox = [];
-const areas = document.querySelectorAll('.area');
-const cardInput = document.querySelector('.card__input');
+let areasInfo = [];
+
+let firstArea = document.querySelector('.area');
+let areas = document.querySelectorAll('.area__inner');
+let cardInput = document.querySelector('.card__input');
+let addArea = document.querySelector('.addArea__input');
 
 let inArea = false;
 let elemX;
@@ -11,6 +15,10 @@ let activeElement;
 let tempElement;
 
 let elemsCase;
+
+let areaID = "ID:";
+
+let tempElems;
 
 
 //Присвоили функцию стартдраг на нажатие мыши
@@ -23,15 +31,17 @@ function mouseDown(e) {
 
 	//Тут нужно добавить функцию, которая получит позиции всех элементов
 
-
-	
+		//getAreasPosition(areas);
+	elementsBox = [];
+	elements = e.target.parentElement.querySelectorAll(".element");	
+	areas = document.querySelectorAll('.area__inner');
 
 	if (e.target.className == "element" || e.target.className == "element active") {
 		console.log("Это карточка. Можно передвигать.")
 		e.target.className = "active";
 		activeElement = document.querySelector(".active");
 		
-		
+		activeElement.style.left = activeElement.getBoundingClientRect().x + 0.1 + 'px';
 
 		elemX = (activeElement.getBoundingClientRect().x);
 		elemY = (activeElement.getBoundingClientRect().y);
@@ -40,13 +50,11 @@ function mouseDown(e) {
 		tempElement.classList.add('element');
 		tempElement.style.height = activeElement.offsetHeight + 'px';
 		tempElement.style.background = 'rgba(77, 77, 77, 0.1)';
+	
 
 		elemsCount();
-		elementsBox = [];
 		
-		activeElement.after(tempElement);
 
-		
 		
 		console.log(elemX, elemY);
 
@@ -59,14 +67,6 @@ function mouseDown(e) {
 
 //Функция для обработки движения элемента
 function startDrag(e) {
-
-
-	//Снимает ограничение на перетаскивание
-
-
-	activeElement.ondragstart = function() {
-		return false;
-	};
 
 
 	activeElement.style.position = 'absolute';
@@ -82,7 +82,10 @@ function startDrag(e) {
 
 	
 
-	
+	//Снимает ограничение на перетаскивание
+	activeElement.ondragstart = function() {
+		return false;
+	};
 
 	function moveAt(e) {
 		
@@ -90,22 +93,13 @@ function startDrag(e) {
 		activeElement.style.top = e.pageY - (activeElement.offsetHeight - elemY) +'px';
 
 		
+		getCollision(activeElement, areas);
+		
+		// eval(elemsCase); 
 
-		if (activeElement.getBoundingClientRect().x < areas[0].getBoundingClientRect().x + areas[0].getBoundingClientRect().width && 
-		activeElement.getBoundingClientRect().y + activeElement.getBoundingClientRect().height > areas[0].getBoundingClientRect().y) {
-			areas[0].classList.add('shadow');
-			inArea = true;
-			
-		} else {
-			areas[0].classList.remove('shadow');
-			inArea = false;
-			
-		}
 		
-		console.log(elemsCase);
-		
-		 
-		eval(elemsCase); 
+
+		console.log(areaID);
 		
 		
 	}
@@ -113,51 +107,89 @@ function startDrag(e) {
 		document.addEventListener ('mousemove', moveAt);
 
 		//Отпускаем элемент 
-		activeElement.onmouseup = function (e) {
-		drop();
-		document.removeEventListener('mousemove', moveAt);
-		activeElement.onmouseup = null;
-		
-		
-		
-		
-	
-	};
+		activeElement.addEventListener ('mouseup', function (e) {
+			drop();
+			
+
+			document.removeEventListener('mousemove', moveAt);
+			activeElement.onmouseup = null;
+			
+	});
 };
 
+document.addEventListener('mouseup', (e) => {
+	
+	for (i=0; i < areas.length; i++) {
+		areas[i].classList.remove('shadow');
+		console.log("mouseUp: document")
+	}
+	
+})
+
 //Обработчик для добавления карточки
-cardInput.addEventListener('keydown', (e) => {
-	if(e.keyCode == 13) {
+
+
+document.addEventListener('keydown', (e) => {
+	if(e.keyCode == 13 && e.target.className == 'card__input') {
+		
 		console.log('Карточку можно добавить');
+		cardInput = e.target.parentElement.querySelector(".card__input");
+
 		let card = document.createElement('div');
 		card.classList.add('element');
 		card.innerHTML = cardInput.value;
-		areas[0].querySelector('.card__input').before(card);
+		cardInput.before(card);
 		cardInput.value = "";
+
+		
 	}
 });
+
+addArea.addEventListener('keydown', function (e) {
+	if(e.keyCode == 13) { 
+		var newArea = firstArea.cloneNode(true);
+		var newInput = (newArea.querySelector(".card__input")).cloneNode();
+		console.log(newInput);
+		newArea.querySelector(".area__inner").innerHTML = '';
+
+		newArea.querySelector('.area__inner').append(newInput);
+		newArea.querySelector('.area__title').innerHTML = addArea.value;
+		addArea.value = '';
+		addArea.blur();
+
+		addArea.parentElement.before(newArea);
+	}
+})
+
+document.addEventListener('keydown', function (e)  {
+	if (e.keyCode == 84) {
+		
+	}
+})
 
 // Функция для проверки условия для сброса элемента
 
 function drop () {
 	console.log('Drop: ', inArea)
+	
+
 
 	if(inArea) {
-		console.log("Элемент можно бросить", this.inArea);
+		console.log("Элемент можно бросить", inArea);
 		
-		activeElement.style.transition = 'all 1s ease';
+		activeElement.style.transition = 'all 0.5s ease';
 		document.onmousedown = "";
 		setTimeout(() => {
 			document.onmousedown = mouseDown;
-		}, 1000);
+		}, 500);
 
-		areas[0].classList.remove('shadow');
+		
 
 		activeElement.style.left = tempElement.getBoundingClientRect().x + 'px';
 		activeElement.style.top = tempElement.getBoundingClientRect().y + 'px';
 
 		activeElement.onmousedown = null;
-
+		
 		activeElement.addEventListener('transitionend', function() {
 			activeElement.style.transition = '';
 			activeElement.style.position = 'relative';
@@ -168,10 +200,11 @@ function drop () {
 
 			activeElement.className ="element";
 			tempElement.remove();
-
-		
+			
+			
 			console.log("Анимация закончилась...");
-		});} else {
+		});
+		} else {
 		console.log("Элемент нельзя бросить", inArea);
 		activeElement.className = "element";
 		tempElement.remove();
@@ -181,21 +214,54 @@ function drop () {
 
 
 function elemsCount() {
-	elements = document.querySelectorAll(".element");
+	
 	elemsCase = `switch (true) { \n`;
 
 	for (i = 0; i < elements.length; i++) {
 		elementsBox.push ({
-			posX: elements[i].getBoundingClientRect().x,
-			posY: elements[i].getBoundingClientRect().y,
 			elemCase: `case ${Number.parseInt(elements[i].getBoundingClientRect().y)} > 
 			Number.parseInt(activeElement.getBoundingClientRect().y): elements[${i}].before(tempElement); break;\n`
 		});
-		console.log(`Element ${i+1} position Y: ` + elementsBox[i].posY);
-		
+	
 		elemsCase += elementsBox[i].elemCase;
 	}
-	elemsCase += `default: elements[elements.length - 1].after(tempElement); break;}`;
-	
+		elemsCase += `default: cardInput.before(tempElement); break;}`;
 };
+
+
+
+function getCollision (actElem, areas) {
+
+	eval(elemsCase); 
+	console.log(elemsCase);
+	for (i = 0; i < areas.length; i++) {
+		if (areas[i].getBoundingClientRect().x < actElem.getBoundingClientRect().x && 
+			areas[i].getBoundingClientRect().x + areas[i].getBoundingClientRect().width > actElem.getBoundingClientRect().x) {
+			areas[i].classList.add('shadow');
+			
+			
+			elements = areas[i].querySelectorAll(".element");
+			cardInput = areas[i].querySelector('.card__input');
+			
+
+			//getAreasPosition(areas);
+
+			elementsBox = [];
+
+			elemsCount();
+			
+			inArea = true;
+			break;
+		}	
+		else {
+			
+			areas[i].classList.remove('shadow');
+			inArea = false;	
+		}
+	}
+	
+
+
+}
+
 
